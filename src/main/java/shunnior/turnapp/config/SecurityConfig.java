@@ -33,11 +33,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"No tienes permisos para acceder a este recurso.\"}");
+                        })
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/auth/**", "/api/public/**").permitAll() // Rutas públicas
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo accesible por ADMIN
-                                .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN") // USER y ADMIN pueden acceder
+                        req.requestMatchers("/auth/**", "/api/public/**").permitAll()
+                                .requestMatchers("/api/admin/service/close/**").hasRole("USER")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/users/dashboard").hasRole("USER")
+                                .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

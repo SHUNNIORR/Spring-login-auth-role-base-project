@@ -18,6 +18,7 @@ import shunnior.turnapp.user.UserRepository;
 import shunnior.turnapp.user.roles.Role;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -29,7 +30,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public TokenResponse register(final RegisterRequest request) {
+    public TokenResponse register(final RegisterRequest request, boolean isAdmin) {
         if(repository.findByEmail(request.email()).isPresent()){
             throw new UserEntityException(UserEntityExceptionType.USER_ALREADY_EXISTS);
         }
@@ -37,7 +38,7 @@ public class AuthService {
         final User user = User.builder()
                 .name(request.name())
                 .email(request.email())
-                .roles(Set.of(Role.ROLE_USER))
+                .roles(Set.of(isAdmin?Role.ROLE_ADMIN:Role.ROLE_USER))
                 .password(passwordEncoder.encode(request.password()))
                 .build();
 

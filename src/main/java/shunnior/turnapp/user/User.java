@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import shunnior.turnapp.auth.repository.Token;
+import shunnior.turnapp.service.Service;
 import shunnior.turnapp.user.roles.Role;
 
 import java.util.Collection;
@@ -58,4 +59,10 @@ public class User implements UserDetails {
     public String getUsername() {
         return this.getName();
     }
+
+    @Column(nullable = false)
+    private boolean isBusy = false;
+
+    @OneToMany(mappedBy = "assignedTo")
+    private List<Service> assignedServices;
 }

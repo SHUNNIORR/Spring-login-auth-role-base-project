@@ -3,6 +3,7 @@ package shunnior.turnapp.auth.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import shunnior.turnapp.auth.service.AuthService;
 
@@ -15,7 +16,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<TokenResponse> register(@RequestBody RegisterRequest request) {
-        final TokenResponse response = service.register(request);
+        final TokenResponse response = service.register(request,false);
         return ResponseEntity.ok(response);
     }
 
